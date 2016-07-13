@@ -9,7 +9,10 @@ import { match, RouterContext } from 'react-router'
 import routes from './routes'
 import nunjucks from 'nunjucks'
 
-let app = express()
+// getting Bookshelf instance
+import bookshelf from './database'
+
+const app = express()
 
 nunjucks.configure(__dirname + '/views', {
     autoescape: false,
@@ -20,6 +23,10 @@ app.use(express.static('public'))
 
 app.set('view engine', 'html')
 
+app.get('/hello', (req, res) => {
+    res.send('hello')
+})
+
 app.use((req, res) => {
     match({ routes, location: req.url}, (err, redirectLocation, renderProps) => {
         if (err) {
@@ -28,7 +35,7 @@ app.use((req, res) => {
         }
 
         if (!renderProps) {
-            return res.status(400).end('Not found')
+            return res.status(404).end('Not found')
         }
 
         res.render('base', {
